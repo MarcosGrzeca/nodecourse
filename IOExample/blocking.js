@@ -1,0 +1,1 @@
+const getUSer = require("./src/getUser");
