@@ -13,7 +13,7 @@ const messageOne = document.querySelector("#message-1")
 weatherForm.addEventListener("submit", (e) => {
     e.preventDefault();
     messageOne.textContent = "Loading";
-    fetch("http://localhost:3000/weather?address=" + encodeURIComponent(search.value)).then((response) => {
+    fetch("/weather?address=" + encodeURIComponent(search.value)).then((response) => {
         response.json().then((data) => {
             console.log(data);
             messageOne.textContent = data.forecast;
