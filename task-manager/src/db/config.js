@@ -1,4 +1,4 @@
-const urlBase = "mongodb://18.191.65.135:27017/"
+const urlBase = "mongodb://3.18.107.162:27017/"
 
 getUrlBase = () => {
     return urlBase;
