@@ -1,6 +1,8 @@
 const express = require("express");
 const User = require("../models/user")
 const auth = require("../middleware/auth")
+const multer = require("multer")
+const {sendWelcomeEmail} = require("../emails/account")
 
 const router = new express.Router()
 router.get("/test", (req, res) => {
@@ -11,6 +13,7 @@ router.post('/users', async (req, res) => {
     const user = new User(req.body)
     try {
         await user.save();
+        sendWelcomeEmail(user.email, user.name)
         const token = await user.generateAuthToken()
         res.status(201).send({ user, token })
     } catch (e) {
@@ -99,5 +102,25 @@ router.delete('/users/me', auth, async (req, res) => {
         res.status(500).send(e)
     }
 })
+
+const upload = multer({
+    dest: "avatars"
+})
+
+router.post("/users/me/avatar", auth, upload.single("avatar"), async (req, res) => {
+    req.user.avatar = req.file.buffer
+    await req.user.save()
+    res.send(200)
+}), (error, req, res, next) => {
+    res.status(400).send({error: error.message})
+}
+
+router.delete("/delete/me/avatar", auth, async (req, res) => {
+    req.user.avatar = undefined
+    await req.user.save()
+    res.send(200)
+}), (error, req, res, next) => {
+    res.status(400).send({error: error.message})
+}
 
 module.exports = router
